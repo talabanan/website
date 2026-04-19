@@ -1,0 +1,28 @@
+<p class="reveal reveal-delay-2">
+  Diplômée de l'Université de Tabriz, Tala Banan Baghalian a consacré ses études à la langue et à la littérature françaises, explorant les œuvres de Zola, Modiano, Le Clézio et Sarraute à travers des approches sociocritiques et linguistiques.
+</p>
+<p class="reveal reveal-delay-3">
+  Ses cours s'adaptent à chaque apprenant, qu'il soit débutant cherchant ses premiers mots, ou avancé souhaitant affiner sa maîtrise littéraire. Elle enseigne actuellement à <a href="https://elam.ca/en" target="_blank" rel="noopener">ELAM</a>, en présentiel et en ligne, avec une pédagogie fondée sur l'immersion et la confiance.
+</p>
+<div class="about-details reveal">
+  <div>
+    <div class="about-detail-label">Spécialisation</div>
+    <div class="about-detail-value">FLE &amp; Littérature</div>
+  </div>
+  <div>
+    <div class="about-detail-label">Niveaux</div>
+    <div class="about-detail-value">Débutant – Avancé</div>
+  </div>
+  <div>
+    <div class="about-detail-label">Formation</div>
+    <div class="about-detail-value">Maîtrise, Univ. Tabriz</div>
+  </div>
+  <div>
+    <div class="about-detail-label">Format</div>
+    <div class="about-detail-value">Présentiel &amp; En ligne</div>
+  </div>
+  <div>
+    <div class="about-detail-label">Lieu de travail</div>
+    <div class="about-detail-value"><a href="https://elam.ca/en" target="_blank" rel="noopener">ELAM</a></div>
+  </div>
+</div>

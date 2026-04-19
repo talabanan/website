@@ -409,9 +409,9 @@ footer { border-top: 1px solid var(--rule); padding: 2rem 0; }
 tala-banan-baghalian-27a04129b" target="_blank" rel="noopener">LinkedIn</a>
           </li>
         </ul>
-        <p class="hero-bio">
+        <div class="hero-bio" id="hero-bio-content" data-content-src="homepage-content/bio.txt">
           Enseignante de français langue étrangère (FLE) depuis 2014, actuellement en poste à <a href="https://elam.ca/en" target="_blank" rel="noopener">ELAM</a>, et titulaire d'une maîtrise en Langue et Littérature françaises de l'Université de Tabriz (mention 18,69/20). Ses recherches portent sur la sociocritique, la littérature française moderne et la didactique des langues secondes. Passionnée par les neurosciences de l'éducation et l'acquisition du langage, elle s'engage à offrir un enseignement ancré dans la culture et l'expression authentique.
-        </p>
+        </div>
       </div>
     </div>
   </div>
@@ -425,7 +425,7 @@ tala-banan-baghalian-27a04129b" target="_blank" rel="noopener">LinkedIn</a>
       <div class="about-heading reveal reveal-delay-1">
         La langue,<br><em>une fenêtre</em><br>sur le monde.
       </div>
-      <div class="about-body">
+      <div class="about-body" id="about-body-content" data-content-src="homepage-content/about.txt">
         <p class="reveal reveal-delay-2">
           Diplômée de l'Université de Tabriz, Tala Banan Baghalian a consacré ses études à la langue et à la littérature françaises, explorant les œuvres de Zola, Modiano, Le Clézio et Sarraute à travers des approches sociocritiques et linguistiques.
         </p>
@@ -574,6 +574,26 @@ function formatDate(iso) {
 }
 
 // ── Load posts from posts/index.json ──
+async function loadHomepageContent() {
+  const editableBlocks = document.querySelectorAll('[data-content-src]');
+
+  await Promise.all([...editableBlocks].map(async block => {
+    const src = block.dataset.contentSrc;
+    if (!src) return;
+
+    try {
+      const res = await fetch(src + '?t=' + Date.now());
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = (await res.text()).trim();
+      if (!text) return;
+      block.innerHTML = text;
+      block.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    } catch (err) {
+      console.warn('Homepage content load error:', src, err);
+    }
+  }));
+}
+
 async function loadPosts() {
   const dot = document.getElementById('status-dot');
   const txt = document.getElementById('status-text');
@@ -643,6 +663,7 @@ document.getElementById('read-modal-overlay').addEventListener('click', e => {
     document.getElementById('read-modal-overlay').classList.remove('open');
 });
 
+loadHomepageContent();
 loadPosts();
 
 // ── Tweaks ──

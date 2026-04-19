@@ -12,5 +12,12 @@
     "category": "Culture",
     "date": "2026-03-10",
     "excerpt": "Comment les films de la Nouvelle Vague peuvent transformer une salle de classe en salle de cinéma."
+  },
+  {
+    "slug": "sample-note",
+    "title": "Sample Note",
+    "category": "",
+    "date": "",
+    "excerpt": ""
   }
 ]

@@ -140,8 +140,9 @@ nav.scrolled .nav-stripe { border-color: var(--rule); }
 
 .hero-info { text-align: justify; text-align-last: left; }
 .hero-name {
-  font-family: var(--serif); font-size: clamp(1.8rem, 2.8vw, 2.6rem);
-  font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 1rem;
+  font-family: var(--serif); font-size: clamp(0.95rem, 1.45vw, 1.3rem);
+  font-weight: 400; line-height: 1.1; letter-spacing: -0.01em; margin-bottom: 1rem;
+  white-space: nowrap;
 }
 .hero-name em { font-style: italic; font-weight: 300; }
 .hero-rule { width: 2.5rem; height: 1px; background: var(--ink); margin-bottom: 1rem; }
@@ -342,6 +343,7 @@ footer { border-top: 1px solid var(--rule); padding: 2rem 0; }
   #hero { padding-top: 5rem; }
   .hero-card { grid-template-columns: 1fr; gap: 1.8rem; }
   .hero-photo { width: 110px; height: 134px; }
+  .hero-name { font-size: clamp(0.9rem, 4.8vw, 1.1rem); }
   section { padding: 3rem 0; }
   .about-grid { grid-template-columns: 1fr; gap: 2rem; }
   .blog-item { grid-template-columns: 2.2rem 1fr; gap: 1rem; }

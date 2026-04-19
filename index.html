@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tala Banan Baghalian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<!-- Markdown renderer -->
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<style>
+/* ── Tokens ── */
+:root {
+  --bg: #111110;
+  --ink: #f9f8f6;
+  --ink-mid: #aaa9a4;
+  --ink-light: #555550;
+  --rule: #2a2a28;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'DM Sans', Helvetica, sans-serif;
+  --content-w: 60%;
+  --max-w: 900px;
+  --wallpaper-opacity: 0.30;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* ── Wallpaper sides ── */
+#wallpaper {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  display: grid;
+  grid-template-columns: 1fr min(var(--content-w), var(--max-w)) 1fr;
+}
+#wallpaper .wp-side {
+  background-image: var(--wallpaper-url, none);
+  background-size: cover; background-position: center;
+  opacity: var(--wallpaper-opacity);
+  transition: opacity 0.4s;
+}
+#wallpaper .wp-side.no-image {
+  background-color: #1a1a18;
+  background-image: repeating-linear-gradient(
+    45deg, transparent, transparent 18px,
+    rgba(255,255,255,0.025) 18px, rgba(255,255,255,0.025) 19px
+  );
+}
+#wallpaper .wp-center { background: var(--bg); }
+
+nav, main, footer, #tweaks-panel { position: relative; z-index: 1; }
+
+/* ── Container: 60% wide + 5% inner padding each side ── */
+.container {
+  width: min(var(--content-w), var(--max-w));
+  margin-inline: auto;
+  background: var(--bg);
+  padding-inline: 5%;
+}
+
+/* ── Nav ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 100; background: transparent;
+}
+.nav-stripe {
+  width: min(var(--content-w), var(--max-w));
+  margin-inline: auto; background: var(--bg);
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.4rem 5%;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+nav.scrolled .nav-stripe { border-color: var(--rule); }
+
+.nav-logo {
+  font-family: var(--serif); font-size: 1rem;
+  font-weight: 400; color: var(--ink); text-decoration: none;
+}
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-mid);
+  text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+
+.nav-toggle {
+  display: none; background: none; border: none;
+  cursor: pointer; padding: 0.2rem;
+  flex-direction: column; gap: 5px;
+}
+.nav-toggle span {
+  display: block; width: 22px; height: 1.5px;
+  background: var(--ink); transition: transform 0.3s, opacity 0.3s;
+}
+.nav-toggle.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-toggle.open span:nth-child(2) { opacity: 0; }
+.nav-toggle.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+.mobile-menu {
+  display: none; flex-direction: column;
+  background: var(--bg); border-top: 1px solid var(--rule);
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-mid); text-decoration: none;
+  padding: 1rem 6%; border-bottom: 1px solid var(--rule); transition: color 0.2s;
+}
+.mobile-menu a:hover { color: var(--ink); }
+
+/* ── Reveal ── */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ── Hero ── */
+#hero { padding-top: 7rem; padding-bottom: 4rem; border-bottom: 1px solid var(--rule); }
+
+.hero-card {
+  display: grid; grid-template-columns: 150px 1fr;
+  gap: 2.5rem; align-items: center;
+}
+.hero-photo { width: 150px; height: 184px; overflow: hidden; background: var(--rule); flex-shrink: 0; }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; filter: grayscale(100%); }
+
+.hero-info { text-align: justify; text-align-last: left; }
+.hero-name {
+  font-family: var(--serif); font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+  font-weight: 400; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 1rem;
+}
+.hero-name em { font-style: italic; font-weight: 300; }
+.hero-rule { width: 2.5rem; height: 1px; background: var(--ink); margin-bottom: 1rem; }
+
+.hero-contact-list { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+.hero-contact-list li {
+  display: flex; align-items: center; gap: 0.6rem;
+  font-size: 0.84rem; font-weight: 300; color: var(--ink-mid);
+}
+.hero-contact-list li a { color: var(--ink-mid); text-decoration: none; transition: color 0.2s; }
+.hero-contact-list li a:hover { color: var(--ink); }
+.hero-contact-list li svg { flex-shrink: 0; color: var(--ink-light); }
+
+.hero-bio {
+  margin-top: 1.2rem; font-size: 0.88rem; font-weight: 300;
+  color: var(--ink-mid); line-height: 1.85;
+  text-align: justify; text-align-last: left; hyphens: auto;
+}
+
+/* ── Section shared ── */
+section { padding: 4.5rem 0; }
+
+.section-label {
+  font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-light); margin-bottom: 2.2rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+/* ── À propos ── */
+#apropos { border-bottom: 1px solid var(--rule); }
+
+.about-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 3.5rem; align-items: start; }
+.about-heading {
+  font-family: var(--serif); font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+  font-weight: 300; line-height: 1.1; letter-spacing: -0.01em;
+}
+.about-heading em { font-style: italic; }
+.about-body p {
+  font-size: 0.9rem; font-weight: 300; line-height: 1.9; color: var(--ink-mid);
+  margin-bottom: 1.1rem; text-align: justify; hyphens: auto;
+}
+.about-details {
+  margin-top: 1.8rem; display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.1rem; border-top: 1px solid var(--rule); padding-top: 1.4rem;
+}
+.about-detail-label { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 0.2rem; }
+.about-detail-value { font-family: var(--serif); font-size: 0.98rem; font-weight: 400; color: var(--ink); }
+
+/* ── Écrits ── */
+#ecrits {}
+
+.blog-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2.5rem; }
+.blog-heading { font-family: var(--serif); font-size: clamp(1.8rem, 2.5vw, 2.4rem); font-weight: 300; letter-spacing: -0.01em; }
+
+.blog-status {
+  font-size: 0.68rem; letter-spacing: 0.1em; color: var(--ink-light);
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.blog-status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-light); display: inline-block; }
+.blog-status-dot.loading { background: #a8855a; animation: pulse 1.2s ease-in-out infinite; }
+.blog-status-dot.ok { background: #6a9a7a; }
+.blog-status-dot.error { background: #9a5a5a; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+.blog-empty {
+  padding: 3rem 0; text-align: center;
+  font-family: var(--serif); font-style: italic;
+  font-size: 1.1rem; color: var(--ink-light);
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+}
+
+.blog-item {
+  display: grid; grid-template-columns: 3rem 1fr auto;
+  align-items: baseline; gap: 1.4rem;
+  padding: 1.5rem 0; border-bottom: 1px solid var(--rule);
+  text-decoration: none; color: inherit;
+  position: relative; cursor: pointer;
+}
+.blog-item:first-of-type { border-top: 1px solid var(--rule); }
+.blog-item::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--ink); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.16,1,0.3,1); z-index: 0;
+}
+.blog-item:hover::before { transform: scaleX(1); }
+.blog-item:hover .blog-num,
+.blog-item:hover .blog-title,
+.blog-item:hover .blog-meta,
+.blog-item:hover .blog-category { color: var(--bg); }
+.blog-item > * { position: relative; z-index: 1; transition: color 0.25s; }
+
+.blog-num { font-family: var(--serif); font-size: 0.78rem; color: var(--ink-light); font-weight: 300; }
+.blog-category { font-size: 0.6rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 0.25rem; }
+.blog-title { font-family: var(--serif); font-size: 1.3rem; font-weight: 400; line-height: 1.2; color: var(--ink); }
+.blog-excerpt {
+  font-size: 0.8rem; color: var(--ink-light); font-weight: 300; margin-top: 0.3rem;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.blog-meta { font-size: 0.68rem; color: var(--ink-light); letter-spacing: 0.06em; white-space: nowrap; }
+
+/* ── Post reader modal ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 500;
+  align-items: flex-start; justify-content: center;
+  padding: 4rem 1rem; overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+
+.post-modal {
+  background: var(--bg); width: min(90vw, 680px);
+  padding: 3.5rem; position: relative; margin: auto;
+}
+.modal-close {
+  position: absolute; top: 1.4rem; right: 1.6rem;
+  background: none; border: none; font-size: 1rem;
+  cursor: pointer; color: var(--ink-mid); transition: color 0.2s;
+  letter-spacing: 0.1em; font-family: var(--sans);
+}
+.modal-close:hover { color: var(--ink); }
+
+.post-modal-cat { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-light); margin-bottom: 0.8rem; }
+.post-modal-title { font-family: var(--serif); font-size: 2rem; font-weight: 400; line-height: 1.1; margin-bottom: 0.5rem; }
+.post-modal-date { font-size: 0.72rem; color: var(--ink-light); margin-bottom: 1.8rem; }
+.post-modal-rule { width: 2rem; height: 1px; background: var(--rule); margin-bottom: 2rem; }
+
+/* Markdown rendered content */
+.post-modal-body { font-size: 0.92rem; font-weight: 300; color: var(--ink-mid); line-height: 1.9; }
+.post-modal-body h2 {
+  font-family: var(--serif); font-size: 1.4rem; font-weight: 400;
+  color: var(--ink); margin: 2rem 0 0.8rem; letter-spacing: -0.01em;
+}
+.post-modal-body h3 {
+  font-family: var(--serif); font-size: 1.15rem; font-weight: 400;
+  color: var(--ink); margin: 1.5rem 0 0.6rem;
+}
+.post-modal-body p { margin-bottom: 1.1rem; text-align: justify; hyphens: auto; }
+.post-modal-body ul, .post-modal-body ol { margin: 0 0 1.1rem 1.5rem; }
+.post-modal-body li { margin-bottom: 0.4rem; }
+.post-modal-body strong { color: var(--ink); font-weight: 500; }
+.post-modal-body em { font-style: italic; }
+.post-modal-body table { width: 100%; border-collapse: collapse; margin-bottom: 1.2rem; font-size: 0.85rem; }
+.post-modal-body th { border-bottom: 1px solid var(--rule); padding: 0.5rem 0.8rem; text-align: left; color: var(--ink); font-weight: 400; letter-spacing: 0.06em; }
+.post-modal-body td { border-bottom: 1px solid var(--rule); padding: 0.5rem 0.8rem; }
+.post-modal-body blockquote {
+  border-left: 2px solid var(--rule); margin: 1rem 0;
+  padding-left: 1.2rem; font-style: italic; color: var(--ink-light);
+}
+.post-modal-loading { text-align: center; font-family: var(--serif); font-style: italic; color: var(--ink-light); padding: 2rem 0; }
+
+/* ── Footer ── */
+footer { border-top: 1px solid var(--rule); padding: 2rem 0; }
+.footer-inner {
+  width: min(var(--content-w), var(--max-w));
+  margin-inline: auto; padding-inline: 5%;
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--bg);
+}
+.footer-name { font-family: var(--serif); font-size: 0.9rem; color: var(--ink-mid); }
+.footer-links { display: flex; gap: 2rem; list-style: none; }
+.footer-links a { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-light); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--ink); }
+.footer-copy { font-size: 0.65rem; color: var(--ink-light); }
+
+/* ── Tweaks Panel ── */
+#tweaks-panel {
+  display: none; position: fixed; bottom: 2rem; right: 2rem;
+  background: #1a1a18; color: var(--ink);
+  border: 1px solid var(--rule);
+  padding: 1.5rem; width: 260px; z-index: 9999; font-family: var(--sans);
+}
+#tweaks-panel.visible { display: block; }
+#tweaks-panel h3 { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.2rem; opacity: 0.5; }
+.tweak-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; gap: 0.8rem; }
+.tweak-label { font-size: 0.75rem; font-weight: 300; flex-shrink: 0; }
+.tweak-select, .tweak-text-input {
+  background: transparent; border: 1px solid var(--rule);
+  color: var(--ink); font-family: var(--sans);
+  font-size: 0.7rem; padding: 0.3rem 0.5rem;
+  outline: none; cursor: pointer; flex: 1; min-width: 0;
+}
+.tweak-select option { background: #1a1a18; }
+.tweak-hint { font-size: 0.6rem; opacity: 0.4; margin-top: -0.5rem; margin-bottom: 0.6rem; line-height: 1.5; }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) { :root { --content-w: 72%; } }
+@media (max-width: 768px) {
+  :root { --content-w: 92%; }
+  .nav-links { display: none; }
+  .nav-toggle { display: flex; }
+  #hero { padding-top: 5rem; }
+  .hero-card { grid-template-columns: 1fr; gap: 1.8rem; }
+  .hero-photo { width: 110px; height: 134px; }
+  section { padding: 3rem 0; }
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .blog-item { grid-template-columns: 2.2rem 1fr; gap: 1rem; }
+  .blog-meta { display: none; }
+  .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
+  #tweaks-panel { bottom: 1rem; right: 1rem; width: calc(100vw - 2rem); }
+}
+@media (max-width: 480px) { .about-details { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- Wallpaper sides -->
+<div id="wallpaper">
+  <div class="wp-side no-image" id="wp-left"></div>
+  <div class="wp-center"></div>
+  <div class="wp-side no-image" id="wp-right"></div>
+</div>
+
+<!-- Nav -->
+<nav id="main-nav">
+  <div class="nav-stripe">
+    <a href="#hero" class="nav-logo"></a>
+    <ul class="nav-links">
+      <li><a href="#apropos">À propos</a></li>
+      <li><a href="#ecrits">Écrits</a></li>
+    </ul>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#apropos" onclick="closeMobile()">À propos</a>
+    <a href="#ecrits" onclick="closeMobile()">Écrits</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- Hero -->
+<section id="hero" data-screen-label="01 Hero">
+  <div class="container">
+    <div class="hero-card reveal">
+      <div class="hero-photo">
+        <img src="uploads/profile.jpeg" alt="Tala Banan Baghalian">
+      </div>
+      <div class="hero-info">
+        <h1 class="hero-name">Tala <em>Banan</em> Baghalian</h1>
+        <div class="hero-rule"></div>
+        <ul class="hero-contact-list">
+          <li>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="14" height="10" rx="1.5"/>
+              <path d="M1 4.5L8 9.5L15 4.5"/>
+            </svg>
+            <a href="mailto:tala.banan@yahoo.com">tala.banan@yahoo.com</a>
+          </li>
+          <li>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M3.5 2A1.5 1.5 0 1 1 3.5 5 1.5 1.5 0 0 1 3.5 2zM2 6.5h3v7.5H2zM6.5 6.5H9v1c.5-.8 1.4-1.2 2.5-1.2C13.4 6.3 14 7.4 14 9.5V14h-3v-4c0-.9-.4-1.5-1.2-1.5-.9 0-1.3.6-1.3 1.6V14H6.5z"/>
+            </svg>
+            <a href="https://linkedin.com/in/tala-banan-baghalian" target="_blank" rel="noopener">LinkedIn</a>
+          </li>
+        </ul>
+        <p class="hero-bio">
+          Enseignante de français langue étrangère (FLE) depuis 2014, titulaire d'une maîtrise en Langue et Littérature françaises de l'Université de Tabriz (mention 18,69/20). Ses recherches portent sur la sociocritique, la littérature française moderne et la didactique des langues secondes. Passionnée par les neurosciences de l'éducation et l'acquisition du langage, elle s'engage à offrir un enseignement ancré dans la culture et l'expression authentique.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- À propos -->
+<section id="apropos" data-screen-label="02 À propos">
+  <div class="container">
+    <div class="section-label reveal">À propos</div>
+    <div class="about-grid">
+      <div class="about-heading reveal reveal-delay-1">
+        La langue,<br><em>une fenêtre</em><br>sur le monde.
+      </div>
+      <div class="about-body">
+        <p class="reveal reveal-delay-2">
+          Diplômée de l'Université de Tabriz, Tala Banan Baghalian a consacré ses études à la langue et à la littérature françaises, explorant les œuvres de Zola, Modiano, Le Clézio et Sarraute à travers des approches sociocritiques et linguistiques.
+        </p>
+        <p class="reveal reveal-delay-3">
+          Ses cours s'adaptent à chaque apprenant — qu'il soit débutant cherchant ses premiers mots, ou avancé souhaitant affiner sa maîtrise littéraire. Elle enseigne en présentiel et en ligne, avec une pédagogie fondée sur l'immersion et la confiance.
+        </p>
+        <div class="about-details reveal">
+          <div>
+            <div class="about-detail-label">Spécialisation</div>
+            <div class="about-detail-value">FLE &amp; Littérature</div>
+          </div>
+          <div>
+            <div class="about-detail-label">Niveaux</div>
+            <div class="about-detail-value">Débutant – Avancé</div>
+          </div>
+          <div>
+            <div class="about-detail-label">Formation</div>
+            <div class="about-detail-value">Maîtrise, Univ. Tabriz</div>
+          </div>
+          <div>
+            <div class="about-detail-label">Format</div>
+            <div class="about-detail-value">Présentiel &amp; En ligne</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Écrits -->
+<section id="ecrits" data-screen-label="03 Écrits">
+  <div class="container">
+    <div class="section-label reveal">Écrits</div>
+    <div class="blog-header reveal reveal-delay-1">
+      <h2 class="blog-heading">Réflexions</h2>
+      <div class="blog-status">
+        <span class="blog-status-dot loading" id="status-dot"></span>
+        <span id="status-text">Chargement…</span>
+      </div>
+    </div>
+    <div id="blog-list"></div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <span class="footer-name">Tala Banan Baghalian</span>
+    <ul class="footer-links">
+      <li><a href="#apropos">À propos</a></li>
+      <li><a href="#ecrits">Écrits</a></li>
+    </ul>
+    <span class="footer-copy">© 2026</span>
+  </div>
+</footer>
+
+<!-- Post reader modal -->
+<div class="modal-overlay" id="read-modal-overlay">
+  <div class="post-modal">
+    <button class="modal-close" id="close-read-modal">✕ Fermer</button>
+    <div class="post-modal-cat" id="read-cat"></div>
+    <h2 class="post-modal-title" id="read-title"></h2>
+    <div class="post-modal-date" id="read-date"></div>
+    <div class="post-modal-rule"></div>
+    <div class="post-modal-body" id="read-body"></div>
+  </div>
+</div>
+
+<!-- Tweaks Panel -->
+<div id="tweaks-panel">
+  <h3>Tweaks</h3>
+  <div class="tweak-row">
+    <span class="tweak-label">Thème</span>
+    <select class="tweak-select" id="tweak-theme">
+      <option value="dark">Sombre</option>
+      <option value="light">Clair</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <span class="tweak-label">Police</span>
+    <select class="tweak-select" id="tweak-font">
+      <option value="serif">Serif</option>
+      <option value="sans">Sans-serif</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <span class="tweak-label">Largeur</span>
+    <select class="tweak-select" id="tweak-width">
+      <option value="55">55%</option>
+      <option value="60">60%</option>
+      <option value="70">70%</option>
+      <option value="80">80%</option>
+    </select>
+  </div>
+  <div class="tweak-row">
+    <span class="tweak-label">Fond</span>
+    <input class="tweak-text-input" type="text" id="tweak-wallpaper" placeholder="URL image">
+  </div>
+  <p class="tweak-hint">Collez l'URL d'une image pour activer le fond latéral.</p>
+  <div class="tweak-row">
+    <span class="tweak-label">Opacité</span>
+    <select class="tweak-select" id="tweak-wp-opacity">
+      <option value="0.10">10%</option>
+      <option value="0.18">18%</option>
+      <option value="0.30">30%</option>
+      <option value="0.50">50%</option>
+      <option value="1">100%</option>
+    </select>
+  </div>
+</div>
+
+<script>
+// ── Mobile nav ──
+const toggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+toggle.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('open');
+  toggle.classList.toggle('open', open);
+});
+function closeMobile() {
+  mobileMenu.classList.remove('open');
+  toggle.classList.remove('open');
+}
+
+// ── Scroll reveal ──
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+document.querySelectorAll('#hero .reveal').forEach(el => setTimeout(() => el.classList.add('visible'), 80));
+
+// ── Nav scroll ──
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40));
+
+// ── Date formatting ──
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+// ── Load posts from posts/index.json ──
+async function loadPosts() {
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+  const container = document.getElementById('blog-list');
+
+  try {
+    const res = await fetch('posts/index.json?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const posts = await res.json();
+
+    dot.className = 'blog-status-dot ok';
+    txt.textContent = posts.length + ' article' + (posts.length > 1 ? 's' : '');
+
+    if (!posts.length) {
+      container.innerHTML = '<div class="blog-empty">Aucun article pour le moment.</div>';
+      return;
+    }
+
+    container.innerHTML = posts.map((p, i) => `
+      <div class="blog-item" onclick="openPost(${JSON.stringify(p).replace(/"/g, '&quot;')})">
+        <span class="blog-num">${String(i + 1).padStart(2, '0')}</span>
+        <div class="blog-content">
+          <div class="blog-category">${p.category || ''}</div>
+          <div class="blog-title">${p.title}</div>
+          ${p.excerpt ? `<div class="blog-excerpt">${p.excerpt}</div>` : ''}
+        </div>
+        <div class="blog-meta">${formatDate(p.date)}</div>
+      </div>
+    `).join('');
+
+  } catch (err) {
+    dot.className = 'blog-status-dot error';
+    txt.textContent = 'Erreur de chargement';
+    container.innerHTML = '<div class="blog-empty">Impossible de charger les articles.</div>';
+    console.warn('Posts load error:', err);
+  }
+}
+
+// ── Open post reader ──
+async function openPost(p) {
+  document.getElementById('read-cat').textContent = p.category || '';
+  document.getElementById('read-title').textContent = p.title;
+  document.getElementById('read-date').textContent = formatDate(p.date);
+  document.getElementById('read-body').innerHTML = '<div class="post-modal-loading">Chargement…</div>';
+  document.getElementById('read-modal-overlay').classList.add('open');
+
+  try {
+    const res = await fetch('posts/' + p.slug + '.md?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const md = await res.text();
+    // Strip YAML frontmatter (--- ... ---) if present
+    const stripped = md.replace(/^---[\s\S]*?---\s*\n/, '');
+    // Strip leading H1 (title already shown in header)
+    const body = stripped.replace(/^#[^\n]*\n/, '').trimStart();
+    document.getElementById('read-body').innerHTML = marked.parse(body);
+  } catch (err) {
+    document.getElementById('read-body').innerHTML = '<p style="color:var(--ink-light);font-style:italic">Contenu indisponible.</p>';
+  }
+}
+
+// Close modal
+document.getElementById('close-read-modal').addEventListener('click', () => {
+  document.getElementById('read-modal-overlay').classList.remove('open');
+});
+document.getElementById('read-modal-overlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('read-modal-overlay'))
+    document.getElementById('read-modal-overlay').classList.remove('open');
+});
+
+loadPosts();
+
+// ── Tweaks ──
+const panel = document.getElementById('tweaks-panel');
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "fontStyle": "serif",
+  "theme": "dark",
+  "contentWidth": "60",
+  "wallpaperUrl": "wallpaper\/moon-2.jpg",
+  "wallpaperOpacity": "1"
+}/*EDITMODE-END*/;
+
+let tweaks = {...TWEAK_DEFAULTS};
+
+function applyTweaks() {
+  const root = document.documentElement;
+  if (tweaks.theme === 'dark') {
+    root.style.setProperty('--bg', '#111110');
+    root.style.setProperty('--ink', '#f9f8f6');
+    root.style.setProperty('--ink-mid', '#aaa9a4');
+    root.style.setProperty('--ink-light', '#555550');
+    root.style.setProperty('--rule', '#2a2a28');
+  } else {
+    root.style.setProperty('--bg', '#f9f8f6');
+    root.style.setProperty('--ink', '#111110');
+    root.style.setProperty('--ink-mid', '#555550');
+    root.style.setProperty('--ink-light', '#aaa9a4');
+    root.style.setProperty('--rule', '#d8d7d2');
+  }
+  root.style.setProperty('--serif',
+    tweaks.fontStyle === 'sans' ? '"DM Sans", Helvetica, sans-serif' : '"Cormorant Garamond", Georgia, serif'
+  );
+  root.style.setProperty('--content-w', (tweaks.contentWidth || '60') + '%');
+
+  const wpUrl = tweaks.wallpaperUrl || '';
+  const wpOp = tweaks.wallpaperOpacity || '0.30';
+  document.querySelectorAll('.wp-side').forEach(s => {
+    if (wpUrl) { s.style.backgroundImage = `url(${wpUrl})`; s.classList.remove('no-image'); }
+    else { s.style.backgroundImage = ''; s.classList.add('no-image'); }
+    s.style.opacity = wpOp;
+  });
+
+  document.getElementById('tweak-theme').value = tweaks.theme;
+  document.getElementById('tweak-font').value = tweaks.fontStyle;
+  document.getElementById('tweak-width').value = tweaks.contentWidth;
+  document.getElementById('tweak-wallpaper').value = tweaks.wallpaperUrl || '';
+  document.getElementById('tweak-wp-opacity').value = tweaks.wallpaperOpacity || '0.30';
+}
+
+applyTweaks();
+
+function updateTweak(key, val) {
+  tweaks[key] = val; applyTweaks();
+  window.parent.postMessage({type:'__edit_mode_set_keys', edits:{[key]: val}}, '*');
+}
+
+document.getElementById('tweak-theme').addEventListener('change', e => updateTweak('theme', e.target.value));
+document.getElementById('tweak-font').addEventListener('change', e => updateTweak('fontStyle', e.target.value));
+document.getElementById('tweak-width').addEventListener('change', e => updateTweak('contentWidth', e.target.value));
+document.getElementById('tweak-wallpaper').addEventListener('change', e => updateTweak('wallpaperUrl', e.target.value));
+document.getElementById('tweak-wp-opacity').addEventListener('change', e => updateTweak('wallpaperOpacity', e.target.value));
+
+window.addEventListener('message', e => {
+  if (e.data?.type === '__activate_edit_mode') panel.classList.add('visible');
+  if (e.data?.type === '__deactivate_edit_mode') panel.classList.remove('visible');
+});
+window.parent.postMessage({type: '__edit_mode_available'}, '*');
+</script>
+</body>
+</html>
